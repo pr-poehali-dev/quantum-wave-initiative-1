@@ -100,19 +100,28 @@ function Reactions({ articleUrl }: { articleUrl: string }) {
   )
 }
 
+const PAGE_SIZE = 6
+
 export default function NewsGrid() {
   const [active, setActive] = useState("all")
   const [articles, setArticles] = useState<Article[]>([])
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
 
   useEffect(() => {
     setLoading(true)
     setError(false)
-    fetch(`${NEWS_API_URL}?category=${active}&pageSize=12`)
+    setPage(1)
+    setHasMore(true)
+    fetch(`${NEWS_API_URL}?category=${active}&pageSize=${PAGE_SIZE}&page=1`)
       .then((r) => r.json())
       .then((data) => {
-        setArticles(data.articles || [])
+        const items = data.articles || []
+        setArticles(items)
+        setHasMore(items.length === PAGE_SIZE)
         setLoading(false)
       })
       .catch(() => {
@@ -120,6 +129,21 @@ export default function NewsGrid() {
         setLoading(false)
       })
   }, [active])
+
+  const loadMore = () => {
+    const nextPage = page + 1
+    setLoadingMore(true)
+    fetch(`${NEWS_API_URL}?category=${active}&pageSize=${PAGE_SIZE}&page=${nextPage}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const items = data.articles || []
+        setArticles((prev) => [...prev, ...items])
+        setPage(nextPage)
+        setHasMore(items.length === PAGE_SIZE)
+        setLoadingMore(false)
+      })
+      .catch(() => setLoadingMore(false))
+  }
 
   return (
     <section className="relative z-10 w-full px-5 sm:px-10 lg:px-20 pb-24">
@@ -217,6 +241,29 @@ export default function NewsGrid() {
                 </a>
               )
             })}
+          </div>
+        )}
+
+        {/* Load more */}
+        {!loading && !error && hasMore && (
+          <div className="flex justify-center mt-10">
+            <button
+              onClick={loadMore}
+              disabled={loadingMore}
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-8 py-3 text-sm font-medium text-white/70 backdrop-blur transition-all duration-200 hover:bg-white/10 hover:text-white hover:border-white/30 disabled:opacity-50"
+            >
+              {loadingMore ? (
+                <>
+                  <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white/70 animate-spin"></span>
+                  Загружаем...
+                </>
+              ) : (
+                <>
+                  <Icon name="ChevronDown" size={16} />
+                  Загрузить ещё
+                </>
+              )}
+            </button>
           </div>
         )}
       </div>

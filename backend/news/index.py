@@ -53,6 +53,7 @@ def handler(event: dict, context) -> dict:
     params = event.get("queryStringParameters") or {}
     category = params.get("category", "all")
     page_size = min(int(params.get("pageSize", 6)), 6)
+    page = max(int(params.get("page", 1)), 1)
 
     if category == "all":
         query = " OR ".join([
@@ -68,6 +69,7 @@ def handler(event: dict, context) -> dict:
         "language": "en",
         "sortBy": "publishedAt",
         "pageSize": page_size,
+        "page": page,
         "apiKey": api_key,
     })
 
