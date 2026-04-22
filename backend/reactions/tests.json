@@ -1,0 +1,21 @@
+{
+  "tests": [
+    {
+      "name": "Get reactions for article",
+      "method": "GET",
+      "path": "/?url=https://example.com/article",
+      "expectedStatus": 200,
+      "expectedBody": { "likes": 0, "dislikes": 0 },
+      "bodyMatcher": "partial"
+    },
+    {
+      "name": "Add like",
+      "method": "POST",
+      "path": "/",
+      "body": { "url": "https://example.com/article-test", "reaction": "like" },
+      "expectedStatus": 200,
+      "expectedBody": { "likes": 1 },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react"
+import Icon from "@/components/ui/icon"
 
 const NEWS_API_URL = "https://functions.poehali.dev/cee2cc19-a216-45ec-8a38-670b643911bf"
+const REACTIONS_API_URL = "https://functions.poehali.dev/032e0f46-0f9b-4bfe-9faa-915ad7c26192"
 
 const CATEGORY_STYLES: Record<string, { color: string; dot: string }> = {
   ai: { color: "text-violet-400 bg-violet-400/10 border-violet-400/20", dot: "bg-violet-400" },
@@ -31,6 +33,71 @@ function formatDate(dateStr: string) {
   if (!dateStr) return ""
   const d = new Date(dateStr)
   return d.toLocaleDateString("ru-RU", { day: "numeric", month: "long", year: "numeric" })
+}
+
+function Reactions({ articleUrl }: { articleUrl: string }) {
+  const [likes, setLikes] = useState(0)
+  const [dislikes, setDislikes] = useState(0)
+  const [voted, setVoted] = useState<"like" | "dislike" | null>(null)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    fetch(`${REACTIONS_API_URL}?url=${encodeURIComponent(articleUrl)}`)
+      .then((r) => r.json())
+      .then((d) => { setLikes(d.likes); setDislikes(d.dislikes) })
+      .catch(() => {})
+  }, [articleUrl])
+
+  const vote = async (reaction: "like" | "dislike", e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (voted || loading) return
+    setLoading(true)
+    const res = await fetch(REACTIONS_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: articleUrl, reaction }),
+    }).then((r) => r.json()).catch(() => null)
+    if (res) {
+      setLikes(res.likes)
+      setDislikes(res.dislikes)
+      setVoted(reaction)
+    }
+    setLoading(false)
+  }
+
+  return (
+    <div className="flex items-center gap-3">
+      <button
+        onClick={(e) => vote("like", e)}
+        disabled={!!voted || loading}
+        className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border transition-all duration-200 ${
+          voted === "like"
+            ? "bg-emerald-500/20 border-emerald-400/40 text-emerald-300"
+            : voted
+            ? "border-white/5 text-white/20 cursor-not-allowed"
+            : "border-white/10 text-white/40 hover:border-emerald-400/40 hover:text-emerald-300 hover:bg-emerald-500/10"
+        }`}
+      >
+        <Icon name="ThumbsUp" size={13} />
+        {likes}
+      </button>
+      <button
+        onClick={(e) => vote("dislike", e)}
+        disabled={!!voted || loading}
+        className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border transition-all duration-200 ${
+          voted === "dislike"
+            ? "bg-rose-500/20 border-rose-400/40 text-rose-300"
+            : voted
+            ? "border-white/5 text-white/20 cursor-not-allowed"
+            : "border-white/10 text-white/40 hover:border-rose-400/40 hover:text-rose-300 hover:bg-rose-500/10"
+        }`}
+      >
+        <Icon name="ThumbsDown" size={13} />
+        {dislikes}
+      </button>
+    </div>
+  )
 }
 
 export default function NewsGrid() {
@@ -142,8 +209,10 @@ export default function NewsGrid() {
                   </p>
 
                   <div className="flex items-center justify-between mt-5 pt-4 border-t border-white/10">
-                    <span className="text-white/30 text-xs">{formatDate(item.date)}</span>
-                    <span className="text-white/30 text-xs">{item.source}</span>
+                    <div className="flex flex-col gap-2">
+                      <span className="text-white/30 text-xs">{formatDate(item.date)} · {item.source}</span>
+                      <Reactions articleUrl={item.url} />
+                    </div>
                   </div>
                 </a>
               )
