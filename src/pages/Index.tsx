@@ -1,6 +1,7 @@
 import GradientBlinds from "@/components/GradientBlinds"
 import Navbar from "@/components/Navbar"
 import NewsGrid from "@/components/NewsGrid"
+import CoursesSection from "@/components/CoursesSection"
 
 const Index = () => {
   return (
@@ -72,6 +73,7 @@ const Index = () => {
           </div>
         </div>
 
+        <CoursesSection />
         <NewsGrid />
       </div>
     </main>
