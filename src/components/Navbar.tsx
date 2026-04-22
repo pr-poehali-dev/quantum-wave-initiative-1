@@ -55,9 +55,7 @@ export default function Navbar() {
           <a className="relative px-4 py-2 text-white/70 hover:text-white transition-colors cursor-pointer" href="#space">
             <span className="relative z-20">Космос</span>
           </a>
-          <a className="relative px-4 py-2 text-white/70 hover:text-white transition-colors cursor-pointer" href="#about">
-            <span className="relative z-20">О нас</span>
-          </a>
+
         </div>
 
         <div className="flex items-center gap-3">
@@ -140,13 +138,7 @@ export default function Navbar() {
               >
                 Космос
               </a>
-              <a
-                href="#about"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-left px-4 py-3 text-lg font-medium text-white/80 hover:text-white transition-colors rounded-lg hover:bg-white/10"
-              >
-                О нас
-              </a>
+
               <div className="border-t border-white/20 pt-4 mt-4 flex flex-col space-y-3">
                 <a
                   href="#subscribe"
