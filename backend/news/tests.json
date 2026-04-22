@@ -1,0 +1,12 @@
+{
+  "tests": [
+    {
+      "name": "Get all news",
+      "method": "GET",
+      "path": "/?category=all&pageSize=6",
+      "expectedStatus": 200,
+      "expectedBody": { "total": 6 },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
