@@ -95,13 +95,11 @@ def handler(event: dict, context) -> dict:
 
         title_ru = translate(item["title"])
         time.sleep(0.3)
-        excerpt_ru = translate(item.get("description") or "")
-        time.sleep(0.3)
 
         articles.append({
             "id": item.get("url", ""),
             "title": title_ru,
-            "excerpt": excerpt_ru,
+            "excerpt": item.get("description") or "",
             "date": (item.get("publishedAt") or "")[:10],
             "source": item.get("source", {}).get("name", ""),
             "url": item.get("url", ""),
