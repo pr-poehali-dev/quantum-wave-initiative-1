@@ -1,5 +1,6 @@
 import GradientBlinds from "@/components/GradientBlinds"
 import Navbar from "@/components/Navbar"
+import NewsGrid from "@/components/NewsGrid"
 
 const Index = () => {
   return (
@@ -57,6 +58,7 @@ const Index = () => {
             </div>
           </div>
         </div>
+        <NewsGrid />
       </div>
     </main>
   )
