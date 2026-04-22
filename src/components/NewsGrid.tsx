@@ -1,3 +1,5 @@
+import { useState } from "react"
+
 const news = [
   {
     id: 1,
@@ -61,17 +63,49 @@ const news = [
   },
 ]
 
+const filters = [
+  { label: "Все", value: "all", activeClass: "bg-white text-black", dotClass: "" },
+  { label: "Искусственный интеллект", value: "Искусственный интеллект", activeClass: "bg-violet-500/20 text-violet-300 border-violet-400/40", dotClass: "bg-violet-400" },
+  { label: "Робототехника", value: "Робототехника", activeClass: "bg-cyan-500/20 text-cyan-300 border-cyan-400/40", dotClass: "bg-cyan-400" },
+  { label: "Космос", value: "Космос", activeClass: "bg-amber-500/20 text-amber-300 border-amber-400/40", dotClass: "bg-amber-400" },
+]
+
 export default function NewsGrid() {
+  const [active, setActive] = useState("all")
+
+  const filtered = active === "all" ? news : news.filter((n) => n.category === active)
+
   return (
     <section className="relative z-10 w-full px-5 sm:px-10 lg:px-20 pb-24">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-white">Последние новости</h2>
           <span className="text-white/40 text-sm">Обновлено сегодня</span>
         </div>
 
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {filters.map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setActive(f.value)}
+              className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
+                active === f.value
+                  ? f.activeClass + " border-transparent"
+                  : "border-white/10 text-white/50 hover:text-white/80 hover:border-white/20"
+              }`}
+            >
+              {f.dotClass && (
+                <span className={`h-1.5 w-1.5 rounded-full ${f.dotClass}`}></span>
+              )}
+              {f.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {news.map((item) => (
+          {filtered.map((item) => (
             <article
               key={item.id}
               className="group flex flex-col rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-300 cursor-pointer"
