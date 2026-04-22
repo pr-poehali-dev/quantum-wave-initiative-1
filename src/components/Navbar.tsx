@@ -58,14 +58,7 @@ export default function Navbar() {
 
         </div>
 
-        <div className="flex items-center gap-3">
-          <a
-            href="#subscribe"
-            className="rounded-lg font-medium relative cursor-pointer hover:-translate-y-0.5 transition-all duration-200 inline-block text-center px-4 py-2 text-sm border bg-gradient-to-r from-violet-600 to-indigo-600 border-violet-400/30 text-white hover:from-violet-500 hover:to-indigo-500"
-          >
-            Подписаться
-          </a>
-        </div>
+
       </header>
 
       {/* Mobile Header */}
@@ -139,15 +132,7 @@ export default function Navbar() {
                 Космос
               </a>
 
-              <div className="border-t border-white/20 pt-4 mt-4 flex flex-col space-y-3">
-                <a
-                  href="#subscribe"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-4 py-3 text-lg font-bold text-center rounded-lg transition-all duration-200 border bg-gradient-to-r from-violet-600 to-indigo-600 border-violet-400/30 text-white"
-                >
-                  Подписаться
-                </a>
-              </div>
+
             </nav>
           </div>
         </div>
