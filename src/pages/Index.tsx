@@ -52,7 +52,17 @@ const Index = () => {
             </div>
           </div>
         </div>
-        {/* Рекламный блок РСЯ — горизонтальный баннер */}
+        {/* Рекламный блок РСЯ — горизонтальный баннер #1 */}
+        <div className="relative z-10 w-full px-5 sm:px-10 lg:px-20 mb-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="w-full h-[90px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+              {/* Сюда вставить код блока РСЯ после одобрения Яндекса */}
+              <span className="text-white/20 text-xs">Место для рекламы</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Рекламный блок РСЯ — горизонтальный баннер #2 */}
         <div className="relative z-10 w-full px-5 sm:px-10 lg:px-20 mb-8">
           <div className="max-w-6xl mx-auto">
             <div className="w-full h-[90px] rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm flex items-center justify-center overflow-hidden">
