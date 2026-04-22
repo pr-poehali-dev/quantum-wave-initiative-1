@@ -2,6 +2,7 @@ import os
 import json
 import urllib.request
 import urllib.parse
+import time
 
 CATEGORY_QUERIES = {
     "ai": "artificial intelligence OR ChatGPT OR OpenAI OR machine learning",
@@ -16,8 +17,26 @@ CATEGORY_LABELS = {
 }
 
 
+def translate(text: str) -> str:
+    """Переводит текст с английского на русский через MyMemory API."""
+    if not text:
+        return text
+    url = "https://api.mymemory.translated.net/get?" + urllib.parse.urlencode({
+        "q": text[:500],
+        "langpair": "en|ru",
+    })
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "FutureWave/1.0"})
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+        translated = data.get("responseData", {}).get("translatedText", "")
+        return translated if translated else text
+    except Exception:
+        return text
+
+
 def handler(event: dict, context) -> dict:
-    """Получает актуальные новости по категориям AI, робототехники и космоса через NewsAPI."""
+    """Получает и переводит на русский актуальные новости по темам AI, робототехники и космоса."""
     if event.get("httpMethod") == "OPTIONS":
         return {
             "statusCode": 200,
@@ -33,7 +52,7 @@ def handler(event: dict, context) -> dict:
     api_key = os.environ.get("NEWSAPI_KEY")
     params = event.get("queryStringParameters") or {}
     category = params.get("category", "all")
-    page_size = int(params.get("pageSize", 12))
+    page_size = min(int(params.get("pageSize", 6)), 6)
 
     if category == "all":
         query = " OR ".join([
@@ -74,10 +93,15 @@ def handler(event: dict, context) -> dict:
         else:
             cat_key = category
 
+        title_ru = translate(item["title"])
+        time.sleep(0.3)
+        excerpt_ru = translate(item.get("description") or "")
+        time.sleep(0.3)
+
         articles.append({
             "id": item.get("url", ""),
-            "title": item["title"],
-            "excerpt": item.get("description") or "",
+            "title": title_ru,
+            "excerpt": excerpt_ru,
             "date": (item.get("publishedAt") or "")[:10],
             "source": item.get("source", {}).get("name", ""),
             "url": item.get("url", ""),
@@ -89,5 +113,5 @@ def handler(event: dict, context) -> dict:
     return {
         "statusCode": 200,
         "headers": {"Access-Control-Allow-Origin": "*"},
-        "body": json.dumps({"articles": articles, "total": len(articles)}),
+        "body": json.dumps({"articles": articles, "total": len(articles)}, ensure_ascii=False),
     }
